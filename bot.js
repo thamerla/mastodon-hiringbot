@@ -2,6 +2,12 @@ const masto = require('masto');
 const dotenv = require('dotenv');
 dotenv.config();
 
+let cache = new Map();
+
+// clear cache every 30 minutes
+setTimeout(() => {
+  cache.clear();
+}, 1000 * 60 * 30);
 
 const main = async () => {
   const m = await masto.login({
@@ -13,6 +19,10 @@ const main = async () => {
   const stream = await m.stream.streamUser();
   
   stream.on('update', (status) => {
+    if (status.reblogged) return;  
+    if (cache.has(status.id)) return;
+
+    cache.set(status.id, true); 
     console.log(status.url);
     m.statuses.reblog(status.id);
   });
