@@ -20,7 +20,10 @@ const main = async () => {
   
   stream.on('update', (status) => {
     if (status.reblogged) return;  
+    
     if(status.account.bot) return;
+    if(status.account.url.toLowerCase().includes('bot')) return;
+    
     if (cache.has(status.id)) return;
     
     cache.set(status.id, true); 
