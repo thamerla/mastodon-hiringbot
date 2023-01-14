@@ -27,7 +27,9 @@ const main = async () => {
     if (cache.has(status.id)) return;
     
     if(status.account.noindex) return;
-    
+    if(status.account.note.toLowerCase().includes('nobot')) return;
+    if(status.account.note.toLowerCase().includes('noindex')) return;
+
     cache.set(status.id, true); 
     console.log(status.url);
     m.statuses.reblog(status.id);
