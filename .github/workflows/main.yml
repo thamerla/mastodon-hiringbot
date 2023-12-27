@@ -1,0 +1,28 @@
+name: Deploy
+on:
+  push:
+    branches:
+      - main
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Use Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: "20.x"
+    - name: Install dependencies
+      run: npm i
+    - name: Deploy via rsync over ssh
+      uses: burnett01/rsync-deployments@6.0.0
+      with:
+        switches: -avzr --delete --exclude=".env" --exclude=".git" --exclude=".github" --include="" --filter=""
+        path: ./
+        remote_path: ${{ secrets.PATH }}
+        remote_host: ${{ secrets.HOST }}
+        remote_port: ${{ secrets.PORT }}
+        remote_user: ${{ secrets.USERNAME }}
+        remote_key: ${{ secrets.KEY }}
+      
